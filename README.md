@@ -8,4 +8,4 @@ step5: copy same database name ie (flygo or any name you gave to db) , go to con
 step6: run `npx sequelize-cli db:migrate` this will add all the required tables to database.
 step7: run `npx sequelize-cli db:seed:all` this will create the admin user in database.
 step8: npm run server
-step9: import this postman collection to your postman and try running apis. `https://documenter.getpostman.com/view/19690167/2s9YBz2umt`
+step9: import this postman collection to your postman and try running apis. https://documenter.getpostman.com/view/19690167/2s9YBz2umt
