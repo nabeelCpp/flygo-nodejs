@@ -117,6 +117,14 @@ exports.update = async (req, res) => {
         * Confirm transactions and save data to db
         */
         await dbTransaction.commit()
+         /**
+         * delete password string.
+        */
+         delete agent.dataValues.password
+         /**
+          * Convert logo to public url
+          */
+         agent.logo = agent.logo?`${process.env.BASE_URL}/agents/logos/${agent.logo}`:agent.logo
         /**
          * Send response back.
          */
@@ -316,6 +324,15 @@ exports.create = async (req, res) => {
          * Confirm transactions and save data to db
          */
         await dbTransaction.commit()
+
+         /**
+         * delete password string.
+        */
+         delete agent.dataValues.password
+         /**
+          * Convert logo to public url
+          */
+         agent.logo = agent.logo?`${process.env.BASE_URL}/agents/logos/${agent.logo}`:agent.logo
  
          /**
           * Send response
@@ -323,6 +340,90 @@ exports.create = async (req, res) => {
          return res.send({
              success: true,
              message: "Agent created successfully!",
+             data: agent
+         })
+    } catch (error) {
+        /**
+         * Roll back transactions if any error occured.
+         */
+        await dbTransaction.rollback()
+        agentAuth.removeFilesUploaded(req)
+        return commonController.catchError(res, error)
+    }
+}
+
+
+/**
+ * Agent logo update
+ */
+exports.logoUpdate = async (req, res) => {
+    /**
+     * Initialize db transaction
+     */
+    const dbTransaction = await sequelize.transaction()
+    try {
+        /**
+         * fetch id from request
+        */
+        const id = req.params.id
+        /**
+         * Check if agent exist or not
+         */
+
+        let agent = await Agent.findByPk(id, { dbTransaction })
+        if(!agent) {
+            return res.status(404).send({
+                success: false,
+                message: 'Agent not found!'
+            })
+        }
+ 
+        
+        
+        /**
+        * Move uploaded logo to appropriate destinations and remove the old logo.
+        */
+        if(req.files['logo'] && req.files['logo'].length > 0) {
+            let logoFile = req.files['logo'][0]
+            var oldLogo = agent.logo
+            var logoTargetDir = logoFile.destination+'/agents/logos/'
+            // Create the target directory if it doesn't exist
+            if (!fs.existsSync(logoTargetDir)) {
+                await fs.promises.mkdir(logoTargetDir);
+            }
+            let logo = logoFile.filename+path.extname(logoFile.originalname)
+            await fs.promises.rename(logoFile.path,logoTargetDir+logo) //Moving logo
+            agent.logo = logo
+            await agent.save({ dbTransaction })
+        }
+
+        /**
+         * Confirm transactions and save data to db
+         */
+        await dbTransaction.commit()
+
+        /**
+         * Remove old logo if exist
+         */
+        if(oldLogo){
+            fs.unlinkSync(logoTargetDir+oldLogo)
+        }
+
+         /**
+         * delete password string.
+        */
+         delete agent.dataValues.password
+         /**
+          * Convert logo to public url
+          */
+         agent.logo = agent.logo?`${process.env.BASE_URL}/agents/logos/${agent.logo}`:agent.logo
+ 
+         /**
+          * Send response
+         */
+         return res.send({
+             success: true,
+             message: "Agent logo updated successfully!",
              data: agent
          })
     } catch (error) {

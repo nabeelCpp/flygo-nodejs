@@ -53,7 +53,8 @@ exports.login = async (req, res) => {
                 accessToken: token,
                 id: admin.id,
                 email: admin.email,
-                name: admin.name
+                name: admin.name,
+                role: 'admin'
             }
         })
     } catch (error) {

@@ -30,17 +30,6 @@ module.exports = function(app) {
 
   app.group("/api/admin", (router) => {
     router.use([authJwt.verifyToken, authJwt.isAdmin]);
-
-    /**
-     * @swagger
-     * /test:
-     *  get:
-     *      summary: Test authenticated api
-     *      description: Test authenticated api
-     *      responses: 
-     *          200:
-     *              description: Successfull response 
-     */
     router.get("/test", (req, res) => {
         return res.send({
             message: true
@@ -79,6 +68,11 @@ module.exports = function(app) {
      * Create agent
      */
     router.post("/agents", upload.fields([{name: 'logo', maxCount:1}, {name: 'documents', maxCount: 5}]),validations.admin.agents.agentCreateValidations, adminController.agents.create)
+
+    /**
+     * Update agent Logo 
+     */
+    router.put("/agents/logo/(:id)", upload.fields([{name: 'logo', maxCount:1}]),validations.admin.agents.agentLogo, adminController.agents.logoUpdate)
 
 
     /****************************************************************************************************

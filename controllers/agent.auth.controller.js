@@ -49,6 +49,12 @@ exports.login = async (req, res) => {
         agent.logo = agent.logo?`${process.env.BASE_URL}/agents/logos/${agent.logo}`:agent.logo
 
         /**
+         * Assign role to user.
+         */
+
+        user.dataValues.role = 'agent'
+
+        /**
          * Send response
         */
         return commonController.sendSuccess(res, "Agent Loggedin successfully!", agent)
@@ -160,13 +166,19 @@ exports.register = async (req, res) => {
          */
         agent.dataValues.accessToken = await generateToken(agent)
         /**
-         * Send response
+         * delete password string.
         */
         delete agent.dataValues.password
         /**
          * Convert logo to public url
          */
         agent.logo = agent.logo?`${process.env.BASE_URL}/agents/logos/${agent.logo}`:agent.logo
+
+        /**
+         * Assign role to user.
+         */
+
+        user.dataValues.role = 'agent'
 
         /**
          * Send response
@@ -191,12 +203,12 @@ const generateToken = async (agent) => {
 
 
 const removeFilesUploaded = (req) => {
-    if(req.files['logo']) {
+    if(req.files && req.files['logo']) {
         let file = req.files['logo'][0]
         fs.unlinkSync(file.path)
     }
 
-    if(req.files['documents']) {
+    if(req.files && req.files['documents']) {
         let docs = req.files['documents']
         docs.forEach(doc => {
             fs.unlinkSync(doc.path)

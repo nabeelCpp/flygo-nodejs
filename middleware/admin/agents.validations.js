@@ -52,7 +52,7 @@ exports.agentCreateValidations = [
   (req, res, next) => {
       const errors = validationResult(req);
       let errorsArr = errors.array()
-      if(!req.files.logo) {
+      if(!req.files || !req.files.logo) {
           errorsArr.push({
               type: "file",
               msg: "Please include logo file.",
@@ -63,6 +63,30 @@ exports.agentCreateValidations = [
       if (!errors.isEmpty() || errorsArr.length ) {
           agentAuthController.removeFilesUploaded(req)
           return res.status(400).json({ errors: errorsArr });
+      }
+      next();
+  }
+]
+
+
+/**
+ * Middleware to upload logo
+ */
+exports.agentLogo = [
+  (req, res, next) => {
+      const errors = validationResult(req);
+      let errorsArr = errors.array()
+      if(!req.files || !req.files.logo) {
+          errorsArr.push({
+              type: "file",
+              msg: "Please include logo file.",
+              path: "logo",
+              location: "body"
+          })
+      }
+      if (!errors.isEmpty() || errorsArr.length ) {
+        agentAuthController.removeFilesUploaded(req)
+        return res.status(400).json({ errors: errorsArr });
       }
       next();
   }

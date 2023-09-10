@@ -40,6 +40,12 @@ exports.login = async (req, res) => {
          * Send response
         */
         delete user.dataValues.password
+
+        /**
+         * Assign role to user.
+         */
+
+        user.dataValues.role = 'user'
         /**
          * Send response
         */
@@ -93,6 +99,12 @@ exports.register = async (req, res) => {
          */
         user.dataValues.accessToken = await generateToken(user)
         delete user.dataValues.password
+
+        /**
+         * Assign role to user.
+         */
+
+        user.dataValues.role = 'user'
 
         /**
          * Send response
