@@ -73,6 +73,7 @@ exports.agentRegister = [
     body('mobile', 'Mobile is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
     body('travelAgentId', 'Travel Agent Id is required').not().isEmpty(),
+    body('companyName', 'Company Name is required').not().isEmpty(),
     body('representativeName', 'Representative Name is required').not().isEmpty(),
     body('akama', 'Akama is required').not().isEmpty(),
     body('password', 'Password must be strong. It should contain at least 8 characters, including uppercase, lowercase, and special characters.').isStrongPassword(),

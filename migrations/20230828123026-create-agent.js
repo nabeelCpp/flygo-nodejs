@@ -35,6 +35,9 @@ module.exports = {
       representativeName: {
         type: Sequelize.STRING
       },
+      companyName: {
+        type: Sequelize.STRING
+      },
       akama: {
         type: Sequelize.STRING
       },

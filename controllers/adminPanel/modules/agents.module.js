@@ -46,6 +46,9 @@ exports.index = async (req, res) => {
              * Find All agents registered.
              */
             let allAgents = await Agent.findAll({
+                order: [
+                    ['id', 'DESC']
+                ],
                 include: AgentDocuments,
                 attributes: {
                     exclude: ['password']
@@ -60,7 +63,7 @@ exports.index = async (req, res) => {
         /**
          * Sending response back to admin.
          */
-        return res.send(agents)
+        return commonController.sendSuccess(res, "Agent/s fetched successfully!", agents)
     } catch (error) {
         return commonController.catchError(res, error)
     }
@@ -102,6 +105,7 @@ exports.update = async (req, res) => {
          * Update values to db
          */
         agent.mobile = body.mobile ? body.mobile : agent.mobile
+        agent.email = body.email ? body.email : agent.email
         agent.landline = body.landline ? body.landline : agent.landline
         agent.country = body.country ? body.country : agent.country
         agent.city = body.city ? body.city : agent.city
@@ -109,9 +113,10 @@ exports.update = async (req, res) => {
         agent.representativeName = body.representativeName ? body.representativeName : agent.representativeName
         agent.akama = body.akama ? body.akama : agent.akama
         agent.status = body.status ? body.status : agent.status
-        agent.creditLimit = body.creditLimit && body.creditLimit
-        agent.serviceCharges = body.serviceCharges && body.serviceCharges
-        agent.serviceChargesType = body.serviceChargesType && body.serviceChargesType
+        agent.creditLimit = body.creditLimit ? body.creditLimit : agent.creditLimit
+        agent.serviceCharges = body.serviceCharges ? body.serviceCharges : agent.serviceCharges
+        agent.serviceChargesType = body.serviceChargesType ? body.serviceChargesType : agent.serviceChargesType
+        agent.companyName = body.companyName ? body.companyName : agent.companyName
         await agent.save()
         /**
         * Confirm transactions and save data to db
@@ -128,11 +133,8 @@ exports.update = async (req, res) => {
         /**
          * Send response back.
          */
-        return res.send({
-            success: true,
-            message: "Agent updated successfully!",
-            data: agent
-        })
+        
+        return commonController.sendSuccess(res, "Agent updated successfully!", agent)
     } catch (error) {
         await dbTransaction.rollback()
         return commonController.catchError(res, error)
@@ -210,13 +212,7 @@ exports.delete = async (req, res) => {
         /**
          * Return the delete success response response
          */
-
-        return res.send({
-            success: true,
-            message: `Agent <b><u>${agent.representativeName}</u></b> with akama number <b><u>${agent.akama}</b></u> removed successfully!`
-        })
-        
-
+        return commonController.sendSuccess(res, `Agent <b><u>${agent.representativeName}</u></b> with akama number <b><u>${agent.akama}</b></u> removed successfully!`)
     } catch (error) {
         /**
          * roll back changes made to db
@@ -267,7 +263,8 @@ exports.create = async (req, res) => {
             status : body.status ? body.status : null,
             creditLimit : body.creditLimit ? body.creditLimit : null,
             serviceCharges : body.serviceCharges ? body.serviceCharges : null,
-            serviceChargesType : body.serviceChargesType ? body.serviceChargesType : null
+            serviceChargesType : body.serviceChargesType ? body.serviceChargesType : null,
+            companyName : body.companyName ? body.companyName : null,
         }, { dbTransaction })
  
         
@@ -337,11 +334,8 @@ exports.create = async (req, res) => {
          /**
           * Send response
          */
-         return res.send({
-             success: true,
-             message: "Agent created successfully!",
-             data: agent
-         })
+
+         return commonController.sendSuccess(res, "Agent created successfully!", agent)
     } catch (error) {
         /**
          * Roll back transactions if any error occured.
@@ -421,11 +415,7 @@ exports.logoUpdate = async (req, res) => {
          /**
           * Send response
          */
-         return res.send({
-             success: true,
-             message: "Agent logo updated successfully!",
-             data: agent
-         })
+        return commonController.sendSuccess(res, "Agent logo updated successfully!", agent)
     } catch (error) {
         /**
          * Roll back transactions if any error occured.

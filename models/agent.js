@@ -63,6 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     logo: DataTypes.STRING,
     representativeName: DataTypes.STRING,
+    companyName: DataTypes.STRING,
     akama: {
       type:DataTypes.STRING,
       unique: true,

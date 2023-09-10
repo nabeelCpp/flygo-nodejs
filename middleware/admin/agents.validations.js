@@ -5,22 +5,24 @@ const { body, validationResult } = require('express-validator');
 const agentAuthController = require('../../controllers/agent.auth.controller')
 
 exports.agentUpdateValidation = [
-    body('mobile', 'Mobile number must be valid number!').isMobilePhone(),
+    body('mobile', 'Mobile number must be valid number!').isMobilePhone().optional(),
+    body('email', 'Please include a valid email').isEmail().optional(),
     body('landline').optional(),
     body('country').optional(),
     body('city').optional(),
-    body('travelAgentId', 'Travel Agent ID is required!').notEmpty(),
-    body('representativeName', 'Representative Name is required!').isString().notEmpty(),
-    body('akama', 'Akama is required!').notEmpty(),
-    body('status', 'Status must be 0/1').isInt({ min: 0, max: 1 }),
-    body('creditLimit', 'Credit Limit must be a float positive integer').isFloat({ min: 0 }),
-    body('serviceCharges', 'Service Charges must be a float positive integer').isFloat({ min: 0 }),
+    body('travelAgentId', 'Travel Agent ID is required!').notEmpty().optional(),
+    body('companyName', 'Company Name is required').notEmpty().optional(),
+    body('representativeName', 'Representative Name is required!').isString().notEmpty().optional(),
+    body('akama', 'Akama is required!').notEmpty().optional(),
+    body('status', 'Status must be 0/1').isInt({ min: 0, max: 1 }).optional(),
+    body('creditLimit', 'Credit Limit must be a float positive integer').isFloat({ min: 0 }).optional(),
+    body('serviceCharges', 'Service Charges must be a float positive integer').isFloat({ min: 0 }).optional(),
     body('serviceChargesType').custom((value) => {
       if (value !== 'F' && value !== 'P') {
         throw new Error('Service charges type must be either "F": Flat or "P": Percentage');
       }
       return true;
-    }),
+    }).optional(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -33,10 +35,12 @@ exports.agentUpdateValidation = [
 
 exports.agentCreateValidations = [
   body('mobile', 'Mobile number must be valid number!').isMobilePhone(),
+  body('email', 'Please include a valid email').isEmail(),
   body('landline').optional(),
   body('country').optional(),
   body('city').optional(),
   body('travelAgentId', 'Travel Agent ID is required!').notEmpty(),
+  body('companyName', 'Company Name is required').not().isEmpty(),
   body('representativeName', 'Representative Name is required!').isString().notEmpty(),
   body('akama', 'Akama is required!').notEmpty(),
   body('password', 'Password must be strong. It should contain at least 8 characters, including uppercase, lowercase, and special characters.').isStrongPassword(),

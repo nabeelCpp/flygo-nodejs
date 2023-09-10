@@ -46,7 +46,7 @@ exports.index = async (req, res) => {
         /**
          * Sending response back to admin.
          */
-        return res.send(users)
+        return commonController.sendSuccess(res, "Users Fetched successfully!", users)
     } catch (error) {
         return commonController.catchError(res, error)
     }
