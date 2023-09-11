@@ -74,6 +74,28 @@ module.exports = function(app) {
      */
     router.put("/agents/logo/(:id)", upload.fields([{name: 'logo', maxCount:1}]),validations.admin.agents.agentLogo, adminController.agents.logoUpdate)
 
+    /**
+     * Agent documents crud
+     */
+
+    /**
+     * Upload New Document
+     */
+
+    router.put("/agents/documents/(:agent_id)", upload.fields([{name: 'documents', maxCount:5}]),validations.admin.agents.agentDocs, adminController.agentDocuments.create)
+
+    /**
+     * Remove Document
+     */
+
+    router.delete("/agents/documents/(:agent_id)/(:document_id)", adminController.agentDocuments.remove)
+    
+    /**
+     * Get all documents based on agent id
+     */
+    router.get("/agents/documents/(:agent_id)", adminController.agentDocuments.index)
+
+
 
     /****************************************************************************************************
      *                                      User Routes starts here.

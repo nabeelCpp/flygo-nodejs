@@ -95,3 +95,27 @@ exports.agentLogo = [
       next();
   }
 ]
+
+
+/**
+ * Middleware to upload docs
+ */
+exports.agentDocs = [
+  (req, res, next) => {
+      const errors = validationResult(req);
+      let errorsArr = errors.array()
+      if(!req.files || !req.files.documents) {
+          errorsArr.push({
+              type: "file",
+              msg: "Please include atleast 1 document.",
+              path: "documents",
+              location: "body"
+          })
+      }
+      if (!errors.isEmpty() || errorsArr.length ) {
+        agentAuthController.removeFilesUploaded(req)
+        return res.status(400).json({ errors: errorsArr });
+      }
+      next();
+  }
+]
