@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
  * Used this agentAuthController to rollback the files uploaded either logo or ducuments if any error occured.
  */
 const agentAuthController = require('../../controllers/agent.auth.controller')
+const commonController = require('../../controllers/common/commonFuncs')
 
 exports.agentUpdateValidation = [
     body('mobile', 'Mobile number must be valid number!').isMobilePhone().optional(),
@@ -26,7 +27,7 @@ exports.agentUpdateValidation = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+          return commonController.catchError(res, errors.array(), 400)
         }
         next();
     }
@@ -66,7 +67,7 @@ exports.agentCreateValidations = [
       }
       if (!errors.isEmpty() || errorsArr.length ) {
           agentAuthController.removeFilesUploaded(req)
-          return res.status(400).json({ errors: errorsArr });
+          return commonController.catchError(res, errorsArr, 400)
       }
       next();
   }
@@ -90,7 +91,7 @@ exports.agentLogo = [
       }
       if (!errors.isEmpty() || errorsArr.length ) {
         agentAuthController.removeFilesUploaded(req)
-        return res.status(400).json({ errors: errorsArr });
+        return commonController.catchError(res, errorsArr, 400)
       }
       next();
   }
@@ -114,7 +115,7 @@ exports.agentDocs = [
       }
       if (!errors.isEmpty() || errorsArr.length ) {
         agentAuthController.removeFilesUploaded(req)
-        return res.status(400).json({ errors: errorsArr });
+        return commonController.catchError(res, errorsArr, 400)
       }
       next();
   }

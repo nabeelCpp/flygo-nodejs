@@ -34,6 +34,20 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
+    mobile: {
+      type: DataTypes.STRING,
+      unique: true,
+      validate: {
+        isUnique: async function (value, next) {
+          const user = await User.findOne({ where: { mobile: value } });
+          if (user) {
+            return next('Mobile number already exists');
+          }
+          return next();
+        },
+      },
+    },
+    image: DataTypes.STRING,
     password: DataTypes.STRING
   }, {
     sequelize,

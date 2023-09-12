@@ -111,7 +111,12 @@ module.exports = function(app) {
     /**
      * Update specific user
      */
-    router.put("/users/(:id)", validations.admin.users.userUpdate, adminController.users.update)
+    router.patch("/users/(:id)", validations.admin.users.userUpdate, adminController.users.update)
+
+    /**
+     * Update user's image
+     */
+    router.put("/users/(:id)", upload.fields([{name: 'image', maxCount:1}]), validations.admin.users.userPicture, adminController.users.updateImage)
     /**
      * Creat new user
      */

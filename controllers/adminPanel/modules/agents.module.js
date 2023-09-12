@@ -309,7 +309,7 @@ exports.create = async (req, res) => {
             let logoTargetDir = logoFile.destination+'/agents/logos/'
             // Create the target directory if it doesn't exist
              if (!fs.existsSync(logoTargetDir)) {
-                await fs.promises.mkdir(logoTargetDir);
+                await fs.promises.mkdir(logoTargetDir, { recursive: true });
              }
             let logo = logoFile.filename+path.extname(logoFile.originalname)
             await fs.promises.rename(logoFile.path,logoTargetDir+logo) //Moving logo
@@ -383,7 +383,7 @@ exports.logoUpdate = async (req, res) => {
             var logoTargetDir = logoFile.destination+'/agents/logos/'
             // Create the target directory if it doesn't exist
             if (!fs.existsSync(logoTargetDir)) {
-                await fs.promises.mkdir(logoTargetDir);
+                await fs.promises.mkdir(logoTargetDir, { recursive: true });
             }
             let logo = logoFile.filename+path.extname(logoFile.originalname)
             await fs.promises.rename(logoFile.path,logoTargetDir+logo) //Moving logo

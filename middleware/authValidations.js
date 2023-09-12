@@ -4,13 +4,14 @@ const agentAuthController = require('../controllers/agent.auth.controller')
 /**
  * Validation for User login
  */
+const commonController = require('../controllers/common/commonFuncs')
 exports.login = [
     body('email', 'Please include a valid email').isEmail(),
     body('password', 'Password must be 6 or more characters').isLength({ min: 6 }),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return commonController.catchError(res, errors.array(), 400)
         }
         next();
     }
@@ -29,7 +30,7 @@ exports.register = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return commonController.catchError(res, errors.array(), 400)
         }
         next();
     }
@@ -44,7 +45,7 @@ exports.agentLogin = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return commonController.catchError(res, errors.array(), 400)
         }
         next();
     }
@@ -60,7 +61,7 @@ exports.adminLogin = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return commonController.catchError(res, errors.array(), 400)
         }
         next();
     }
@@ -90,7 +91,7 @@ exports.agentRegister = [
         }
         if (!errors.isEmpty() || errorsArr.length ) {
             agentAuthController.removeFilesUploaded(req)
-            return res.status(400).json({ errors: errorsArr });
+            return commonController.catchError(res, errorsArr, 400)
         }
         next();
     }
