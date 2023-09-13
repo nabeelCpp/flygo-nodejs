@@ -439,3 +439,77 @@ exports.logoUpdate = async (req, res) => {
         return commonController.catchError(res, error)
     }
 }
+
+/**
+ * Remove Logo
+ */
+exports.logoRemove = async (req, res) => {
+    /**
+     * initialize transaction
+     */
+    const dbTransaction = await sequelize.transaction()
+    try {
+        let id = req.params.id
+        /**
+         * Fetch agent from db based on id.
+         */
+        let agent = await Agent.findByPk(id, {
+            attributes: {
+                exclude: ['password']
+            }
+        }, { dbTransaction })
+
+        /**
+         * Check if agent exists or not
+         */
+
+        if( !agent ) {
+            return commonController.catchError(res, "Agent not found!", 404)
+        }
+
+        /**
+         * check logo
+         */
+        if( !agent.logo ) {
+            return commonController.catchError(res, "No logo attached with agent.", 404)
+        }
+
+        /**
+         * remove logo and update the logo path as null
+         */
+
+
+        let logoPath = path.resolve(__dirname, `../../../public/agents/logos/${agent.logo}`)
+        
+        console.log(logoPath)
+        
+        if(fs.existsSync(logoPath)) {
+            // fs.unlinkSync(logoPath)
+            await fs.promises.unlink(logoPath)
+        }
+
+        agent.logo = null
+
+        await agent.save({ dbTransaction })
+
+        /**
+         * Commit the transaction
+         */
+
+        await dbTransaction.commit()
+
+        /**
+         * Send response!
+         */
+        return commonController.sendSuccess(res, "Logo removed successfully!", agent)
+    } catch (error) {
+        /**
+         * Rollback changes
+         */
+        await dbTransaction.rollback()
+        return commonController.catchError(res, error)
+    }
+    return res.send({
+        message: true
+    })
+}

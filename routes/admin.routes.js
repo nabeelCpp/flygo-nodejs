@@ -75,6 +75,11 @@ module.exports = function(app) {
     router.put("/agents/logo/(:id)", upload.fields([{name: 'logo', maxCount:1}]),validations.admin.agents.agentLogo, adminController.agents.logoUpdate)
 
     /**
+     * Remove agent Logo 
+     */
+    router.delete("/agents/logo/(:id)", adminController.agents.logoRemove)
+
+    /**
      * Agent documents crud
      */
 
