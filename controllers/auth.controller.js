@@ -84,7 +84,9 @@ exports.register = async (req, res) => {
             firstName: body.firstName && body.firstName,
             lastName: body.lastName && body.lastName,
             email: body.email && body.email,
-            password: body.password
+            mobile: body.mobile && body.mobile,
+            password: body.password,
+            image: null
        }, { dbTransaction })
 
        /**

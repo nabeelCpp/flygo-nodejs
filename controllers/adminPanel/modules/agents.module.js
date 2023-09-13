@@ -41,6 +41,13 @@ exports.index = async (req, res) => {
                 return commonController.catchError(res, '404 Agent not found!', 404)
             }
             agents.logo = agents.logo?`${process.env.BASE_URL}/agents/logos/${agents.logo}`:agents.logo
+            if(agents.AgentDocuments) {
+                let agentDocuments = agents.AgentDocuments.map(d => {
+                    d.url = d.url?`${process.env.BASE_URL}/agents/documents/${agents.id}/${d.url}`:d.url
+                    return d
+                })
+                agents.AgentDocuments = agentDocuments
+            }
         }else{
             /**
              * Find All agents registered.
@@ -57,6 +64,13 @@ exports.index = async (req, res) => {
 
             var agents = allAgents.map((agent) => {
                 agent.logo = agent.logo?`${process.env.BASE_URL}/agents/logos/${agent.logo}`:agent.logo
+                if(agent.AgentDocuments) {
+                    let agentDocuments = agent.AgentDocuments.map(d => {
+                        d.url = d.url?`${process.env.BASE_URL}/agents/documents/${agent.id}/${d.url}`:d.url
+                        return d
+                    })
+                    agent.AgentDocuments = agentDocuments
+                }
                 return agent
             })
         }

@@ -1,19 +1,8 @@
-const { authJwt } = require("../middleware");
+const { authJwt, validations } = require("../middleware");
+
+const userController = require('../controllers/user.controller')
 
 module.exports = function(app) {
-
-    /**
-     * @swagger
-     * tags:
-     *   name: User-Dashboard
-     *   description: User Secured APIs
-     * securityDefinitions:
-     *   bearerToken:
-     *     type: string
-     *     name: Authorization
-     *     in: header
-     *     description: Bearer Token in the format 'Bearer <token>'
-    */
   app.use(function(req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
@@ -24,25 +13,7 @@ module.exports = function(app) {
 
   app.group("/api/user", (router) => {
     router.use([authJwt.verifyToken, authJwt.isUser]);
-
-    /**
-     * @swagger
-     * /api/user/test:
-     *  get:
-     *      summary: Test authenticated api
-     *      tags: [User-Dashboard]
-     *      security:
-     *        bearerToken: []
-     *      description: Test authenticated api
-     *      responses: 
-     *          200:
-     *              description: Successfull response 
-     */
-    router.get("/test", (req, res) => {
-        return res.send({
-            message: true
-        })
-    })
-
+    router.get("/profile", userController.profile.index)
+    router.patch("/profile", validations.user.userUpdate, userController.profile.update)
   });
 };

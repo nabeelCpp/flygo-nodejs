@@ -1,5 +1,5 @@
 /**
- * Agents Validations in this file.
+ * User & Agents Validations in this file.
  */
 const agents = require('./agents.validations')
 const users = require('./users.validations')

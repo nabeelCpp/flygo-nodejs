@@ -25,7 +25,8 @@ exports.login = [
 exports.register = [
     body('firstName', 'First Name is required!').notEmpty(),
     body('lastName').optional(),
-    body('email').isEmail(),
+    body('email', 'Provide a valid email!').isEmail(),
+    body('mobile', 'Provide a valid mobile number!').isMobilePhone(),
     body('password', 'Password must be strong. It should contain at least 8 characters, including uppercase, lowercase, and special characters.').isStrongPassword(),
     (req, res, next) => {
         const errors = validationResult(req);

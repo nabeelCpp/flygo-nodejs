@@ -1,0 +1,1 @@
+exports.profile = require('./userPanel/modules/profile.module')
