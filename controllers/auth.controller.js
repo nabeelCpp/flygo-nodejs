@@ -46,6 +46,11 @@ exports.login = async (req, res) => {
          */
 
         user.dataValues.role = 'user'
+
+         /**
+          * Convert image to public url
+          */
+         user.image = user.image?`${process.env.BASE_URL}/users/images/${user.image}`:user.image
         /**
          * Send response
         */

@@ -58,7 +58,7 @@ module.exports = function(app) {
     router.patch("/agents/(:id)", validations.admin.agents.agentUpdateValidation, adminController.agents.update)
     
     /**
-     * Delete Agent data.
+     * Delete Agent.
      */
 
     router.delete("/agents/(:id)", adminController.agents.delete)

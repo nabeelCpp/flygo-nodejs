@@ -42,7 +42,10 @@ exports.index = async (req, res) => {
             let allUsers = await User.findAll({
                 attributes : {
                     exclude: ['password']
-                }
+                },
+                order: [
+                    ['id', 'DESC']
+                ],
             })
 
             var users = allUsers.map(user => {
@@ -215,7 +218,7 @@ exports.updateImage = async (req, res) => {
         /**
          * fetch id from request
         */
-        const id = req.params.id
+        const id = req.user ? req.user.id : req.params.id
         /**
          * Check if user exist or not
          */

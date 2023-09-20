@@ -35,7 +35,7 @@ exports.create = async (req, res) => {
      */
     const dbTransaction = await sequelize.transaction()
     try {
-        let agentId = req.params.agent_id
+        let agentId = req.agent ? req.agent.id :req.params.agent_id
         
         /**
          * Get agent from agent_id
@@ -124,7 +124,7 @@ exports.remove = async (req, res) => {
          * Fetch id from parameters
          */
         let docId = req.params.document_id
-        let agentId = req.params.agent_id
+        let agentId = req.agent ? req.agent.id :req.params.agent_id
     
         /**
          * check agent via agentId
@@ -191,7 +191,7 @@ exports.remove = async (req, res) => {
 
 exports.index = async (req, res) => {
     try {
-        let agentId = req.params.agent_id
+        let agentId = req.agent ? req.agent.id :req.params.agent_id
         let documents = await AgentDocuments.findAll({
             where: {
                 agentId

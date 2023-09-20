@@ -26,7 +26,7 @@ const commonController = require('../../common/commonFuncs')
  */
 exports.index = async (req, res) => {
     try {
-        let id = req.params?.id
+        let id = req.agent ? req.agent.id : req.params?.id
         if(id) { 
             /**
              * Find agent by id.
@@ -99,7 +99,7 @@ exports.update = async (req, res) => {
         /**
          * get id from params
          */
-        let id = req.params.id
+        let id = req.agent ? req.agent.id : req.params?.id
         /**
          * Body from request
          */
@@ -373,7 +373,7 @@ exports.logoUpdate = async (req, res) => {
         /**
          * fetch id from request
         */
-        const id = req.params.id
+        let id = req.agent ? req.agent.id : req.params?.id
         /**
          * Check if agent exist or not
          */
@@ -449,7 +449,7 @@ exports.logoRemove = async (req, res) => {
      */
     const dbTransaction = await sequelize.transaction()
     try {
-        let id = req.params.id
+        let id = req.agent ? req.agent.id : req.params?.id
         /**
          * Fetch agent from db based on id.
          */
@@ -477,14 +477,8 @@ exports.logoRemove = async (req, res) => {
         /**
          * remove logo and update the logo path as null
          */
-
-
         let logoPath = path.resolve(__dirname, `../../../public/agents/logos/${agent.logo}`)
-        
-        console.log(logoPath)
-        
         if(fs.existsSync(logoPath)) {
-            // fs.unlinkSync(logoPath)
             await fs.promises.unlink(logoPath)
         }
 

@@ -52,7 +52,7 @@ exports.login = async (req, res) => {
          * Assign role to user.
          */
 
-        user.dataValues.role = 'agent'
+        agent.dataValues.role = 'agent'
 
         /**
          * Send response
@@ -178,7 +178,7 @@ exports.register = async (req, res) => {
          * Assign role to user.
          */
 
-        user.dataValues.role = 'agent'
+        agent.dataValues.role = 'agent'
 
         /**
          * Send response
