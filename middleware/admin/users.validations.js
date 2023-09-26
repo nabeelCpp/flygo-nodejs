@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-const userController = require('../../controllers/adminPanel/modules/users.module')
+const userController = require('../../controllers/userPanel/modules/users.module')
 const commonController = require('../../controllers/common/commonFuncs')
 
 exports.userCreate = [

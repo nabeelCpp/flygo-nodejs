@@ -1,2 +1,2 @@
-exports.agent = require('./adminPanel/modules/agents.module')
-exports.agentDocuments = require('./adminPanel/modules/agentDocuments.module')
+exports.agent = require('./agentPanel/modules/agents.module')
+exports.agentDocuments = require('./agentPanel/modules/agentDocuments.module')

@@ -1,3 +1,3 @@
-exports.agents = require('./adminPanel/modules/agents.module')
-exports.agentDocuments = require('./adminPanel/modules/agentDocuments.module')
-exports.users = require('./adminPanel/modules/users.module')
+exports.agents = require('./agentPanel/modules/agents.module')
+exports.agentDocuments = require('./agentPanel/modules/agentDocuments.module')
+exports.users = require('./userPanel/modules/users.module')
