@@ -48,6 +48,7 @@ db.User = require("./user.js")(sequelize, Sequelize);
 db.Agent = require("./agent.js")(sequelize, Sequelize);
 db.Admin = require("./admin.js")(sequelize, Sequelize);
 db.AgentDocuments = require("./agentdocuments.js")(sequelize, Sequelize);
+db.SabreToken = require('./sabretoken.js')(sequelize, Sequelize)
 
 
 /******************************************************************************************* 

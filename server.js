@@ -12,34 +12,7 @@ require("dotenv").config();
  */
 require('express-group-routes');
 
-/**
- * Include Swagger modules
- */
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express')
 
-/**
- * Write API documentation details here to show as heading and define base URL.
- */
-
-const options = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'FlyGo APIs in Node Js',
-            version: '1.0.0',
-            description: 'API documentation for FlyGo'
-        },
-        servers: [
-            {
-                url: 'http://127.0.0.1:5000/'
-            }
-        ]
-    },
-    apis: ['./routes/agent.routes.js', './routes/user.routes.js', './routes/auth.routes.js']
-}
-
-const swaggerSpec = swaggerJsDoc(options)
 
 
 /**
@@ -49,10 +22,6 @@ const express = require("express");
 
 const app = express();
 
-/**
- * This route is for testing the apis and read its documentation using swagger.
- */
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 /**
  * Fetching port number from env file
@@ -102,9 +71,9 @@ app.use(express.static('public'));
  */
 require('./routes/auth.routes')(app);
 require('./routes/admin.routes')(app);
-// require('./app/routes/public.routes')(app);
 require('./routes/user.routes')(app);
 require('./routes/agent.routes')(app);
+require('./routes/sabre.routes')(app);
 
 
 /**

@@ -1,54 +1,49 @@
-const { authJwt, validations } = require("../middleware");
+const { authJwt, validations } = require('../middleware');
+const agentController = require('../controllers/agent.controller');
+const multer = require('multer');
 
-const agentController = require('../controllers/agent.controller')
-const multer = require('multer')
-/**
- * initialize upload directory
- */
+// Initialize upload directory
 const upload = multer({ dest: 'public/' });
 
-module.exports = function(app) {
-  app.use(function(req, res, next) {
+module.exports = function (app) {
+  // CORS headers middleware
+  app.use(function (req, res, next) {
     res.header(
-      "Access-Control-Allow-Headers",
-      "x-access-token, Origin, Content-Type, Accept"
+      'Access-Control-Allow-Headers',
+      'x-access-token, Origin, Content-Type, Accept'
     );
     next();
   });
 
-  app.group("/api/agent", (router) => {
+  // Group routes under "/api/agent"
+  app.group('/api/agent', (router) => {
+    // Middleware for verifying token and checking if the user is an agent
     router.use([authJwt.verifyToken, authJwt.isAgent]);
-    router.get("/profile", agentController.agent.index)
-    router.patch("/profile", validations.agent.agentUpdateValidation, agentController.agent.update)
-    /**
-     * Update agent Logo 
-     */
-    router.put("/logo", upload.fields([{name: 'logo', maxCount:1}]),validations.agent.agentLogo, agentController.agent.logoUpdate)
 
-    /**
-     * Remove agent Logo 
-     */
-    router.delete("/logo", agentController.agent.logoRemove)
+    // Agent Profile Routes
+    router.get('/profile', agentController.agent.index);
+    router.patch('/profile', validations.agent.agentUpdateValidation, agentController.agent.update);
 
-    /***************************************************************************************************
-     *                                          Agent documents crud
-     **************************************************************************************************/
+    // Agent Logo Routes
+    router.group('/logo', (logoRouter) => {
+      // Update agent logo
+      logoRouter.put('/', upload.fields([{ name: 'logo', maxCount: 1 }]), validations.agent.agentLogo, agentController.agent.logoUpdate);
 
-    /**
-     * Upload New Document
-     */
+      // Remove agent logo
+      logoRouter.delete('/', agentController.agent.logoRemove);
+    });
 
-    router.post("/documents", upload.fields([{name: 'documents', maxCount:5}]),validations.agent.agentDocs, agentController.agentDocuments.create)
+    // Agent Documents CRUD Routes
+    router.group('/documents', (documentsRouter) => {
+      // Upload New Document
+      documentsRouter.post('/', upload.fields([{ name: 'documents', maxCount: 5 }]), validations.agent.agentDocs, agentController.agentDocuments.create);
 
-    /**
-     * Remove Document
-     */
+      // Remove Document by ID
+      documentsRouter.delete('/:document_id', agentController.agentDocuments.remove);
 
-    router.delete("/documents/(:document_id)", agentController.agentDocuments.remove)
-    
-    /**
-     * Get all documents based on agent id
-     */
-    router.get("/documents", agentController.agentDocuments.index)
+      // Get all documents based on agent ID
+      documentsRouter.get('/', agentController.agentDocuments.index);
+    });
+
   });
 };
