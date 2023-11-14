@@ -17,5 +17,9 @@ module.exports = function (app) {
     router.post('/flights', validations.sabre.offersShop, SabreController.AirShop.flights)
     router.post('/flights/revalidate', validations.sabre.revalidate, SabreController.AirShop.revalidate)
     router.post('/flights/book', validations.sabre.booking, SabreController.AirShop.booking)
+    router.post('/flights/airticket', validations.sabre.airticket, SabreController.AirShop.airticket)
+    router.get('/flights/booking/:booking_id', SabreController.AirShop.getBooking)
   });
+
+  // aIRFURSANIA 3rd api integrate
 };

@@ -91,7 +91,7 @@ exports.revalidate = (body) => {
                  */
                 "ArrivalDateTime": f.arrival_date_time,
                 // "ClassOfService": "E", 
-                "ClassOfService": body?.bookingCode ? body.bookingCode : 'E',
+                "ClassOfService": f.bookingCode,
                 "OriginLocation": {
                     /**
                      * scheduleDescs[x].departure.airport
@@ -414,7 +414,7 @@ const FlightSegment = (body) => {
             DepartureDateTime: flight?.departure_date_time,
             FlightNumber: flight?.marketing_airline?.flight_number,
             NumberInParty: `${body?.seatsRequested}`,
-            ResBookDesigCode: body.bookingCode,
+            ResBookDesigCode: flight.bookingCode,
             Status: "NN",
             DestinationLocation: {
                 LocationCode: flight?.destination
@@ -632,18 +632,18 @@ const customerInfoFunc = (body, type) => {
             // advance passenger details
             advancePassenger.push({
                 "SegmentNumber": "A",
-                "Document": p.Document,
+                "Document": c.Document,
                 "PersonName": {
-                    "DateOfBirth": p.dob,
-                    "Gender": p.gender,
+                    "DateOfBirth": c.dob,
+                    "Gender": c.gender,
                     "NameNumber": NameNumber,
-                    "GivenName": p.given_name,
-                    "Surname": p?.sur_name && p.sur_name
+                    "GivenName": c.given_name,
+                    "Surname": c?.sur_name && c.sur_name
                 }
             })
 
             // service
-            let dob = new Date(p.dob)
+            let dob = new Date(c.dob)
             const options = { month: 'short' };
             const monthAbbreviation = dob.toLocaleString('en-US', options);
             services.push({
@@ -675,18 +675,18 @@ const customerInfoFunc = (body, type) => {
             let NameNumber = adultsPerson[0].NameNumber
             advancePassenger.push({
                 "SegmentNumber": "A",
-                "Document": p.Document,
+                "Document": i.Document,
                 "PersonName": {
-                    "DateOfBirth": p.dob,
-                    "Gender": `${p.gender}I`,
+                    "DateOfBirth": i.dob,
+                    "Gender": `${i.gender}I`,
                     "NameNumber": NameNumber,
-                    "GivenName": p.given_name,
-                    "Surname": p?.sur_name && p.sur_name
+                    "GivenName": i.given_name,
+                    "Surname": i?.sur_name && i.sur_name
                 }
             })
 
             // service
-            let dob = new Date(p.dob)
+            let dob = new Date(i.dob)
             const options = { month: 'short' };
             const monthAbbreviation = dob.toLocaleString('en-US', options);
             services.push({
@@ -694,7 +694,7 @@ const customerInfoFunc = (body, type) => {
                 "PersonName": {
                     "NameNumber": NameNumber
                 },
-                "Text": `${p.given_name}${p?.sur_name?'/'+p.sur_name:''}/${dob.toString().padStart(2, '0')}${monthAbbreviation}${dob.getYear()}`
+                "Text": `${i.given_name}${i?.sur_name?'/'+i.sur_name:''}/${dob.toString().padStart(2, '0')}${monthAbbreviation}${dob.getYear()}`
             })
             // Exclude user adult for infant.
             // As 1 adult can take 1 infant, if we had more infants than adult then we will pass the nameNumber duplicated to children and it will give us error reponse from sabre API.
@@ -740,5 +740,63 @@ const SpecialReqDetails = (body) => {
             }
         }
     }
+}
+
+
+// EnhancedAirTicket request
+exports.EnhancedAirTicket = (body) => {
+    let request = {
+        "AirTicketRQ": {
+            "DesignatePrinter": {
+                "Printers": {
+                    "Ticket": {
+                        "CountryCode": process.env.PRINTER_TICKET_COUNTRY_CODE
+                    },
+                    "Hardcopy": {
+                        "LNIATA": process.env.PRINTER_HARDCOPY_LNIATA
+                    }
+                }
+            },
+            "Itinerary": {
+                "ID": body.itenary_id
+            },
+            "Ticketing": [
+                {
+                    "FOP_Qualifiers": {
+                        "BasicFOP": {
+                            "Type": "CA"
+                        }
+                    },
+                    "PricingQualifiers": {
+                        "PriceQuote": PriceQuote(body)
+                    }
+                }
+            ],
+            "PostProcessing": {
+                "EndTransaction": {
+                    "Source": {
+                        "ReceivedFrom": process.env.AGENCY_INFO_ADDRESS
+                    }
+                }
+            }
+        }
+    }
+    return request
+}
+
+
+// Price quotes making
+const PriceQuote = (body) => {
+    let records = []
+    for (let i = 1; i <= body.records; i++) {
+        records.push({
+            "Number": i
+        })
+    }
+    return [
+        {
+            "Record": records
+        }
+    ]
 }
   

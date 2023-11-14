@@ -103,3 +103,17 @@ exports.booking = [
         next();
     }
 ]
+
+
+// Validations for airticket.
+exports.airticket = [
+    body('itenary_id', 'Itenary id is required').isString(),
+    body('records', 'Records must be atleast 1').isInt({ min: 1 }),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return commonController.catchError(res, errors.array(), 400)
+        }
+        next();
+    }
+]
