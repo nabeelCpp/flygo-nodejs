@@ -67,7 +67,7 @@ exports.airticket = async (req, res) => {
     try {
         let body = req.body
         let EnhancedAirTicket = sabreRequests.EnhancedAirTicket(body)
-        return res.send(EnhancedAirTicket)
+        // return res.send(EnhancedAirTicket)
         let APIResponse = await axios.post(`${process.env.SABRE_URL}/v1.3.0/air/ticket`, EnhancedAirTicket, {
             headers: {
                 Authorization: `Bearer ${req.sabreAccessToken}`
