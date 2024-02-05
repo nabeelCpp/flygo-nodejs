@@ -95,7 +95,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('F', 'P'),
       allowNull: true,
       comment: 'Flat: F, Percent: P'
-    }
+    },
+    wallet: {
+      type: DataTypes.DECIMAL(10, 2), // Adjust the type based on your needs
+      allowNull: false,
+      defaultValue: 0.0, // Set a default value if needed
+    },
   }, {
     sequelize,
     modelName: 'Agent',

@@ -120,3 +120,27 @@ exports.agentDocs = [
       next();
   }
 ]
+
+
+/**
+ * Agent topup 
+ */
+
+exports.agentTopUp = [
+  body('agent_id', 'Agent id is required!').isInt(),
+  body('description').optional(),
+  body('balance', 'non-zero Balance must be provided').isFloat({ min: 0 }),
+  body('type').custom((value) => {
+    if (value !== 'credit' && value !== 'debit') {
+      throw new Error('Transaction type must be either credited or debited.');
+    }
+    return true;
+  }),
+  (req, res, next) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return commonController.catchError(res, errors.array(), 200)
+      }
+      next();
+  }
+]

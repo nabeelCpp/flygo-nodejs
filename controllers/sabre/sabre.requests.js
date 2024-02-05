@@ -3,34 +3,56 @@ exports.shop_BFM = (body) => {
     const end_date = body?.return_date && body.return_date
     const OriginDestinationInformation = []
     /**
+     * New code for origin destination request information
+     */
+    body.originDest.forEach((oD, i) => {
+        OriginDestinationInformation.push({
+            "RPH": `${i+1}`, 
+            "DepartureDateTime": `${oD.depart_date}T00:00:00`,
+            "OriginLocation": {
+                "LocationCode": oD.origin
+            },
+            "DestinationLocation": {
+                "LocationCode": oD.destination
+            }
+
+        })
+    })
+
+
+
+    /**
+     * Ends here.
+     */
+    /**
      * Start process to save data to send as round tip or oneway trip.
      */
         // create an object for departure details and push it to OriginDestinationInformation array. It confirms that we have pushed the oneway trip.
-        OriginDestinationInformation.push({
-            "RPH": `${OriginDestinationInformation.length + 1}`, 
-            "DepartureDateTime": `${start_date}T00:00:00`,
-            "OriginLocation": {
-                "LocationCode": body.origin
-            },
-            "DestinationLocation": {
-                "LocationCode": body.destination
-            }
-        })
+        // OriginDestinationInformation.push({
+        //     "RPH": `${OriginDestinationInformation.length + 1}`, 
+        //     "DepartureDateTime": `${start_date}T00:00:00`,
+        //     "OriginLocation": {
+        //         "LocationCode": body.origin
+        //     },
+        //     "DestinationLocation": {
+        //         "LocationCode": body.destination
+        //     }
+        // })
         
-        //Check if trip type is round!
-        if( body.trip_type == 'round' ) {
-            // if trip is round push the second object to array originDestinationInformation.
-            OriginDestinationInformation.push({
-                "RPH": `${OriginDestinationInformation.length + 1}`, 
-                "DepartureDateTime": `${end_date}T00:00:00`,
-                "OriginLocation": {
-                    "LocationCode": body.destination
-                },
-                "DestinationLocation": {
-                    "LocationCode": body.origin
-                }
-            })
-        }
+        // //Check if trip type is round!
+        // if( body.trip_type == 'round' ) {
+        //     // if trip is round push the second object to array originDestinationInformation.
+        //     OriginDestinationInformation.push({
+        //         "RPH": `${OriginDestinationInformation.length + 1}`, 
+        //         "DepartureDateTime": `${end_date}T00:00:00`,
+        //         "OriginLocation": {
+        //             "LocationCode": body.destination
+        //         },
+        //         "DestinationLocation": {
+        //             "LocationCode": body.origin
+        //         }
+        //     })
+        // }
     /**
      * End trip type data here.
      */
@@ -63,7 +85,7 @@ exports.shop_BFM = (body) => {
 }
 
 exports.revalidate = (body) => {
-    const OriginDestinationInformation = []
+    // const OriginDestinationInformation = []
     /**
      * Start process to save data to send as round tip or oneway trip.
      */
@@ -73,167 +95,230 @@ exports.revalidate = (body) => {
          * Populate Flights
          */
 
-        const flightFromHome = body.flights[0]
-        const flightArr = flightFromHome.map(f => {
-            return {
-                /**
-                 * Flight Number: scheduleDescs[x].carrier.operatingFlightNumber
-                 */
-                "Number": f.flight_number,
-                /**
-                 * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
-                 * DepartureTime: scheduleDescs[x].departure.time
-                 */
-                "DepartureDateTime": f.departure_date_time,
-                /**
-                 * Arrival Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
-                 * ArrivalTime: scheduleDescs[x].arrival.time
-                 */
-                "ArrivalDateTime": f.arrival_date_time,
-                // "ClassOfService": "E", 
-                "ClassOfService": f.bookingCode,
-                "OriginLocation": {
-                    /**
-                     * scheduleDescs[x].departure.airport
-                     */
-                    "LocationCode": f.origin
-                },
-                "DestinationLocation": {
-                    /**
-                     * scheduleDescs[x].arrival.airport
-                     */
-                    "LocationCode": f.destination
-                },
-                "Airline": {
-                    /**
-                     * scheduleDescs[x].carrier.operating
-                     */
-                    "Operating": f.flight_airline.Operating,
-                    /**
-                     * scheduleDescs[x].carrier.marketing
-                     */
-                    "Marketing": f.flight_airline.Marketing
-                }
-            }
-        })
+        // const flightFromHome = body.flights[0]
+        // const flightArr = flightFromHome.map(f => {
+        //     return {
+        //         /**
+        //          * Flight Number: scheduleDescs[x].carrier.operatingFlightNumber
+        //          */
+        //         "Number": f.flight_number,
+        //         /**
+        //          * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
+        //          * DepartureTime: scheduleDescs[x].departure.time
+        //          */
+        //         "DepartureDateTime": f.departure_date_time,
+        //         /**
+        //          * Arrival Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
+        //          * ArrivalTime: scheduleDescs[x].arrival.time
+        //          */
+        //         "ArrivalDateTime": f.arrival_date_time,
+        //         // "ClassOfService": "E", 
+        //         "ClassOfService": f.bookingCode,
+        //         "OriginLocation": {
+        //             /**
+        //              * scheduleDescs[x].departure.airport
+        //              */
+        //             "LocationCode": f.origin
+        //         },
+        //         "DestinationLocation": {
+        //             /**
+        //              * scheduleDescs[x].arrival.airport
+        //              */
+        //             "LocationCode": f.destination
+        //         },
+        //         "Airline": {
+        //             /**
+        //              * scheduleDescs[x].carrier.operating
+        //              */
+        //             "Operating": f.flight_airline.Operating,
+        //             /**
+        //              * scheduleDescs[x].carrier.marketing
+        //              */
+        //             "Marketing": f.flight_airline.Marketing
+        //         }
+        //     }
+        // })
 
 
 
 
-        OriginDestinationInformation.push({
-            "RPH": `${OriginDestinationInformation.length + 1}`,
-            /**
-             * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
-             * DepartureTime: scheduleDescs[x].departure.time
-             */
-            "DepartureDateTime": `${flightFromHome[0].departure_date_time}`, // here [0] is for going to destination if the trip is round. Always first array element will be for going from the destination. Second will be for coming back to the home.
-            /**
-             * OriginLocation: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureLocation
-             */
+        // OriginDestinationInformation.push({
+        //     "RPH": `${OriginDestinationInformation.length + 1}`,
+        //     /**
+        //      * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
+        //      * DepartureTime: scheduleDescs[x].departure.time
+        //      */
+        //     "DepartureDateTime": `${flightFromHome[0].departure_date_time}`, // here [0] is for going to destination if the trip is round. Always first array element will be for going from the destination. Second will be for coming back to the home.
+        //     /**
+        //      * OriginLocation: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureLocation
+        //      */
+        //     "OriginLocation": {
+        //         "LocationCode": `${flightFromHome[0].origin}`
+        //     },
+        //     /**
+        //      * DestinationLocation: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].arrivalLocation
+        //      */
+        //     "DestinationLocation": {
+        //         "LocationCode": `${flightFromHome[flightFromHome.length - 1].destination}`
+        //     },
+        //     "TPA_Extensions": {
+        //         "SegmentType": {
+        //             "Code": "O"
+        //         },
+        //         "Flight": flightArr
+        //     }
+        // })
+        
+        // //Check if trip type is round!
+        // if( body.trip_type == 'round' ) {
+        //     // if trip is round push the second object to array originDestinationInformation.
+        //     OriginDestinationInformation.push({
+        //         "RPH": `${OriginDestinationInformation.length + 1}`, 
+        //         "DepartureDateTime": `${end_date}T00:00:00`,
+        //         "OriginLocation": {
+        //             "LocationCode": body.destination
+        //         },
+        //         "DestinationLocation": {
+        //             "LocationCode": body.origin
+        //         }
+        //     })
+        //     const flightToHome = body.flights[1]
+        //     const flightArr = flightToHome.map(f => {
+        //         return {
+        //             /**
+        //              * Flight Number: scheduleDescs[x].carrier.operatingFlightNumber
+        //              */
+        //             "Number": f.flight_number,
+        //             /**
+        //              * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
+        //              * DepartureTime: scheduleDescs[x].departure.time
+        //              */
+        //             "DepartureDateTime": f.departure_date_time,
+        //             /**
+        //              * Arrival Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
+        //              * ArrivalTime: scheduleDescs[x].arrival.time
+        //              */
+        //             "ArrivalDateTime": f.arrival_date_time,
+        //             "ClassOfService": "E",
+        //             "OriginLocation": {
+        //                 /**
+        //                  * scheduleDescs[x].departure.airport
+        //                  */
+        //                 "LocationCode": f.origin
+        //             },
+        //             "DestinationLocation": {
+        //                 /**
+        //                  * scheduleDescs[x].arrival.airport
+        //                  */
+        //                 "LocationCode": f.destination
+        //             },
+        //             "Airline": {
+        //                 /**
+        //                  * scheduleDescs[x].carrier.operating
+        //                  */
+        //                 "Operating": f.flight_airline.Operating,
+        //                 /**
+        //                  * scheduleDescs[x].carrier.marketing
+        //                  */
+        //                 "Marketing": f.flight_airline.Marketing
+        //             }
+        //         }
+        //     })
+
+
+        //     OriginDestinationInformation.push({
+        //         "RPH": `${OriginDestinationInformation.length + 1}`,
+        //         /**
+        //          * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
+        //          * DepartureTime: scheduleDescs[x].departure.time
+        //          */
+        //         "DepartureDateTime": `${flightToHome[0].departure_date_time}`, // here [0] is for going from destination if the trip is round. Always econd array element will be for going to the home.
+        //         /**
+        //          * OriginLocation: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureLocation
+        //          */
+        //         "OriginLocation": {
+        //             "LocationCode": `${flightToHome[0].origin}`
+        //         },
+        //         /**
+        //          * DestinationLocation: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].arrivalLocation
+        //          */
+        //         "DestinationLocation": {
+        //             "LocationCode": `${flightToHome[flightToHome.length - 1].destination}`
+        //         },
+        //         "TPA_Extensions": {
+        //             "SegmentType": {
+        //                 "Code": "O"
+        //             },
+        //             "Flight": flightArr
+        //         }
+        //     })
+        // }
+    /**
+     * End trip type data here.
+     */
+
+    //latest code for here
+    const OriginDestinationInformation = body.flights.map((bF, key) => {
+        return {
+            "RPH": `${key+1}`,
+            "DepartureDateTime": `${bF[0].departure_date_time}`,
             "OriginLocation": {
-                "LocationCode": `${flightFromHome[0].origin}`
+                "LocationCode": `${bF[0].origin}`
             },
-            /**
-             * DestinationLocation: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].arrivalLocation
-             */
             "DestinationLocation": {
-                "LocationCode": `${flightFromHome[flightFromHome.length - 1].destination}`
+                "LocationCode": `${bF[bF.length - 1].destination}`
             },
             "TPA_Extensions": {
                 "SegmentType": {
                     "Code": "O"
                 },
-                "Flight": flightArr
-            }
-        })
-        
-        //Check if trip type is round!
-        if( body.trip_type == 'round' ) {
-            // if trip is round push the second object to array originDestinationInformation.
-            OriginDestinationInformation.push({
-                "RPH": `${OriginDestinationInformation.length + 1}`, 
-                "DepartureDateTime": `${end_date}T00:00:00`,
-                "OriginLocation": {
-                    "LocationCode": body.destination
-                },
-                "DestinationLocation": {
-                    "LocationCode": body.origin
-                }
-            })
-            const flightToHome = body.flights[1]
-            const flightArr = flightToHome.map(f => {
-                return {
-                    /**
-                     * Flight Number: scheduleDescs[x].carrier.operatingFlightNumber
-                     */
-                    "Number": f.flight_number,
-                    /**
-                     * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
-                     * DepartureTime: scheduleDescs[x].departure.time
-                     */
-                    "DepartureDateTime": f.departure_date_time,
-                    /**
-                     * Arrival Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
-                     * ArrivalTime: scheduleDescs[x].arrival.time
-                     */
-                    "ArrivalDateTime": f.arrival_date_time,
-                    "ClassOfService": "E",
-                    "OriginLocation": {
+                "Flight": bF.map(schedule => {
+                    return {
                         /**
-                         * scheduleDescs[x].departure.airport
+                         * Flight Number: scheduleDescs[x].carrier.operatingFlightNumber
                          */
-                        "LocationCode": f.origin
-                    },
-                    "DestinationLocation": {
+                        "Number": schedule.flight_number,
                         /**
-                         * scheduleDescs[x].arrival.airport
+                         * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
+                         * DepartureTime: scheduleDescs[x].departure.time
                          */
-                        "LocationCode": f.destination
-                    },
-                    "Airline": {
+                        "DepartureDateTime": schedule.departure_date_time,
                         /**
-                         * scheduleDescs[x].carrier.operating
+                         * Arrival Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
+                         * ArrivalTime: scheduleDescs[x].arrival.time
                          */
-                        "Operating": f.flight_airline.Operating,
-                        /**
-                         * scheduleDescs[x].carrier.marketing
-                         */
-                        "Marketing": f.flight_airline.Marketing
+                        "ArrivalDateTime": schedule.arrival_date_time,
+                        // "ClassOfService": "E", 
+                        "ClassOfService": schedule.bookingCode,
+                        "OriginLocation": {
+                            /**
+                             * scheduleDescs[x].departure.airport
+                             */
+                            "LocationCode": schedule.origin
+                        },
+                        "DestinationLocation": {
+                            /**
+                             * scheduleDescs[x].arrival.airport
+                             */
+                            "LocationCode": schedule.destination
+                        },
+                        "Airline": {
+                            /**
+                             * scheduleDescs[x].carrier.operating
+                             */
+                            "Operating": schedule.flight_airline.Operating,
+                            /**
+                             * scheduleDescs[x].carrier.marketing
+                             */
+                            "Marketing": schedule.flight_airline.Marketing
+                        }
                     }
-                }
-            })
-
-
-            OriginDestinationInformation.push({
-                "RPH": `${OriginDestinationInformation.length + 1}`,
-                /**
-                 * Departure Date: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureDate
-                 * DepartureTime: scheduleDescs[x].departure.time
-                 */
-                "DepartureDateTime": `${flightToHome[0].departure_date_time}`, // here [0] is for going from destination if the trip is round. Always econd array element will be for going to the home.
-                /**
-                 * OriginLocation: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].departureLocation
-                 */
-                "OriginLocation": {
-                    "LocationCode": `${flightToHome[0].origin}`
-                },
-                /**
-                 * DestinationLocation: groupedItineraryResponse.itineraryGroups[0].groupDescription.legDescriptions[0].arrivalLocation
-                 */
-                "DestinationLocation": {
-                    "LocationCode": `${flightToHome[flightToHome.length - 1].destination}`
-                },
-                "TPA_Extensions": {
-                    "SegmentType": {
-                        "Code": "O"
-                    },
-                    "Flight": flightArr
-                }
-            })
+                })
+            }
         }
-    /**
-     * End trip type data here.
-     */
+    })
+
+    // end here
     let request = {
         OTA_AirLowFareSearchRQ: {
             Version: process.env.SABRE_VERSION,
@@ -651,7 +736,8 @@ const customerInfoFunc = (body, type) => {
                 "PersonName": {
                     "NameNumber": NameNumber
                 },
-                "Text": `${dob.toString().padStart(2, '0')}${monthAbbreviation}${dob.getYear()}`
+                "Text": `${dob.getDay().toString().padStart(2, '0')}${monthAbbreviation}${dob.getFullYear().toString().slice(-2)}`
+                // "Text": `${dob.getDay()}${monthAbbreviation}${dob.getYear()}`
             })
         })
     }
@@ -694,7 +780,7 @@ const customerInfoFunc = (body, type) => {
                 "PersonName": {
                     "NameNumber": NameNumber
                 },
-                "Text": `${i.given_name}${i?.sur_name?'/'+i.sur_name:''}/${dob.toString().padStart(2, '0')}${monthAbbreviation}${dob.getYear()}`
+                "Text": `${i.given_name}${i?.sur_name?'/'+i.sur_name:''}/${dob.getDay().toString().padStart(2, '0')}${monthAbbreviation}${dob.getFullYear().toString().slice(-2)}`
             })
             // Exclude user adult for infant.
             // As 1 adult can take 1 infant, if we had more infants than adult then we will pass the nameNumber duplicated to children and it will give us error reponse from sabre API.

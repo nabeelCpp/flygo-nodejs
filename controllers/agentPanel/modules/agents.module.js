@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt')
 /**
  * Intialize required models.
  */
-const {Agent, AgentDocuments, sequelize} = require('../../../models')
+const {Agent, AgentDocuments, sequelize, Transactions} = require('../../../models')
 
 /**
  * INITIALIZE auth admin controller to undo file upload
@@ -503,7 +503,50 @@ exports.logoRemove = async (req, res) => {
         await dbTransaction.rollback()
         return commonController.catchError(res, error)
     }
-    return res.send({
-        message: true
-    })
+}
+
+/**
+ * Top up of agent account by admin
+ * we can edit this method once we are ready to implement real payments
+ */
+exports.topup = async (req, res) => {
+    let body = req.body
+    const dbTransaction = await sequelize.transaction()
+    try {
+        let trx_id = trxId()
+        /**
+         * Check if agent exists or not
+         */
+        let agent = await Agent.findByPk(body.agent_id)
+        if(!agent) {
+            return commonController.catchError(res, 'Agent not found!')
+        }
+        let transaction = await Transactions.create({
+            trx_id: trx_id,
+            agentId: body.agent_id,
+            topped_up_by: req.admin.id,
+            balance: body.balance,
+            description: body?.description,
+            transaction_type: body.type
+        }, { transaction: dbTransaction })
+
+        agent.wallet = transaction.transaction_type === 'credit' ? parseFloat(agent.wallet) + transaction.balance : parseFloat(agent.wallet) - transaction.balance
+        console.log(agent)
+        await agent.save() // update the wallet of agent
+        dbTransaction.commit()
+
+        return commonController.sendSuccess(res, `Balance of amount ${body.balance} ${body.type}ed successfully to agent ${agent.representativeName}!`, transaction)
+    } catch (error) {
+        await dbTransaction.rollback()
+        return commonController.catchError(res, error)
+    }
+}
+
+const trxId = (length = 10) => {
+    // Generate a random string of characters and numbers
+    const randomString = Math.random().toString(36).substring(2, length+2);
+    // Combine the random string and timestamp to create a unique transaction ID
+    const transactionId = `trx-${randomString}`;
+
+    return transactionId;
 }

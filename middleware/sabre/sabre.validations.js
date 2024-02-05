@@ -30,30 +30,36 @@ exports.authToken = [
 
 // Validations for request coming to fetch the flights between dates and destinations.
 exports.offersShop = [
-    body('depart_date').isDate(),
-    body('origin', 'Origin must be a 3-letter IATA code').isLength({min: 3, max: 3}),
-    body('destination', 'Destination must be a 3-letter IATA code').isLength({min: 3, max: 3}),
+    body('originDest').custom((value) => {
+        if (!Array.isArray(value) || value.length === 0) {
+          throw new Error('originDest array must have at least one object');
+        }
+        return true; // Indicates the success of the validation
+    }),
+    body('originDest.*.depart_date').isDate(),
+    body('originDest.*.origin', 'Origin must be a 3-letter IATA code').isLength({min: 3, max: 3}),
+    body('originDest.*.destination', 'Destination must be a 3-letter IATA code').isLength({min: 3, max: 3}),
     body('passengers.adults', 'At least one adult passenger is required').isInt({ min: 1 }),
     body('passengers.children').optional().isInt({ min: 0 }),
     body('passengers.infants').optional().isInt({ min: 0 }),
-    body('trip_type').custom((value) => {
-      if (value !== 'oneway' && value !== 'round') {
-        throw new Error('Trip type must be either "One way" or "Round Trip"');
-      }
-      return true;
-    }),
+    // body('trip_type').custom((value) => {
+    //   if (value !== 'oneway' && value !== 'round') {
+    //     throw new Error('Trip type must be either "One way" or "Round Trip"');
+    //   }
+    //   return true;
+    // }),
     (req, res, next) => {
         const errors = validationResult(req);
         let errorsArr = errors.array()
         // check if round trip is selected and return date is not selected.
-        if(req.body.trip_type === 'round' && !req.body.return_date) {
-            errorsArr.push({
-                type: "field",
-                msg: "Return date is required for round trips.",
-                path: "return_date",
-                location: "body"
-            })
-        }
+        // if(req.body.trip_type === 'round' && !req.body.return_date) {
+        //     errorsArr.push({
+        //         type: "field",
+        //         msg: "Return date is required for round trips.",
+        //         path: "return_date",
+        //         location: "body"
+        //     })
+        // }
         if (!errors.isEmpty() || errorsArr.length ) {
             return commonController.catchError(res, errorsArr, 400)
         }
@@ -66,9 +72,9 @@ exports.offersShop = [
 exports.revalidate = [
     body('seats_requested', "At least 1 passenger seat is required!").isInt({ min: 1 }),
     body('passengers.adults', 'At least one adult passenger is required').isInt({ min: 1 }),
-    body('trip_type', 'Trip type must be either "One way" or "Round Trip"').notEmpty().isIn(['oneway', 'round']),
-    body('origin', 'Origin must be a 3-letter IATA code').notEmpty().isLength({ min: 3, max: 3 }),
-    body('destination', 'Destination must be a 3-letter IATA code').notEmpty().isLength({ min: 3, max: 3 }),
+    // body('trip_type', 'Trip type must be either "One way" or "Round Trip"').notEmpty().isIn(['oneway', 'round']),
+    // body('origin', 'Origin must be a 3-letter IATA code').notEmpty().isLength({ min: 3, max: 3 }),
+    // body('destination', 'Destination must be a 3-letter IATA code').notEmpty().isLength({ min: 3, max: 3 }),
     body('flights', 'Flights data is required!').isArray({ min: 1 }),
     body('flights.*', 'Atleast 1 flight data is required!').isArray({ min: 1 }),
     body('flights.*.*.departure_date_time', 'Departure Date Time is required!').notEmpty().isISO8601(),

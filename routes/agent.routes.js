@@ -22,6 +22,9 @@ module.exports = function (app) {
 
     // Agent Profile Routes
     router.get('/profile', agentController.agent.index);
+    router.get('/wallet', (req, res) => {
+      return res.send({balance: req.agent.wallet})
+    });
     router.patch('/profile', validations.agent.agentUpdateValidation, agentController.agent.update);
 
     // Agent Logo Routes
@@ -43,6 +46,14 @@ module.exports = function (app) {
 
       // Get all documents based on agent ID
       documentsRouter.get('/', agentController.agentDocuments.index);
+    });
+
+    /**
+     * Agent Flight bookings
+     */
+    router.group('/bookings', (bookingsRouter) => {
+      bookingsRouter.get('/', agentController.agentBookings.index);
+      // bookingsRouter.delete('/:document_id', agentController.agentDocuments.remove);
     });
 
   });
